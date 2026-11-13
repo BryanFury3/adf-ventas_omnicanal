@@ -50,7 +50,7 @@
 				"          descuento = lower(trim(descuento))) ~> limpieza",
 				"limpieza split(!isInteger(cantidad) || !isDecimal(precio_unitario) || !isDecimal(descuento) || !isDecimal(subtotal) || toDecimal(descuento) < 0 || toDecimal(descuento) > 100,",
 				"     disjoint: false) ~> validacion@(rechazados, validos)",
-				"validacion@rechazados derive(cantidad = toInteger(cantidad),",
+				"validacion@validos derive(cantidad = toInteger(cantidad),",
 				"          precio_unitario = toDecimal(precio_unitario),",
 				"          descuento = toDecimal(descuento),",
 				"          subtotal = toDecimal(subtotal)) ~> conversion",
