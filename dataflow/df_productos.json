@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "conversion"
+				},
+				{
+					"name": "duplicados"
 				}
 			],
 			"scriptLines": [
@@ -51,8 +54,16 @@
 				"          proveedor = iif(isNull(proveedor) || trim(proveedor) == '', 'Sin proveedor', trim(proveedor))) ~> limpieza",
 				"limpieza split(!isNull(producto_id) && !isNull(precio_lista) && !isNull(costo_unitario) && !isNull(proveedor) && trim(proveedor) != '',",
 				"     disjoint: false) ~> validacion@(validos, rechazados)",
-				"validacion@validos derive(precio_texto = toDecimal(precio_texto),",
+				"duplicados derive(precio_texto = toDecimal(precio_texto),",
 				"          costo_unitario = toDecimal(costo_unitario)) ~> conversion",
+				"validacion@validos aggregate(groupBy(producto_id),",
+				"     nombre_producto = first(nombre_producto),",
+				"          categoria = first(categoria),",
+				"          marca = first(marca),",
+				"          precio_texto = first(precio_texto),",
+				"          costo_unitario = first(costo_unitario),",
+				"          proveedor = first(proveedor),",
+				"          estado_producto = first(estado_producto)) ~> duplicados",
 				"conversion sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
